@@ -3,8 +3,8 @@
 A web demo for micronuclei detection project.
 
 # Software Architecture
-![Project Architecture](./docs/architect.png)
 ![Project Diagram](./docs/diagram.png)
+![Project Architecture](./docs/architect.png)
 
 # Getting Started
 Web link: www....
