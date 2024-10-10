@@ -26,7 +26,7 @@ def make_prediction(img):
 
 def create_image_with_bboxes(img, prediction): ## Adds Bounding Boxes around original Image.
     img_tensor = torch.tensor(img) ## Transpose
-    img_with_bboxes = draw_bounding_boxes(img_tensor, boxes=prediction["boxes"], width=2)
+    img_with_bboxes = draw_bounding_boxes(img_tensor, boxes=prediction, width=2)
     img_with_bboxes_np = img_with_bboxes.detach().numpy().transpose(1,2,0) ### (3,W,H) -> (W,H,3), Channel first to channel last.
     return img_with_bboxes_np
 
@@ -39,7 +39,8 @@ if upload:
 
     image = pil_to_tensor(img)
     prediction = make_prediction(image) ## Dictionary
-    img_with_bbox = create_image_with_bboxes(np.array(img).transpose(2,0,1), prediction) ## (W,H,3) -> (3,W,H)
+    pred_boxes, pred_masks = model._post_process(prediction)
+    img_with_bbox = create_image_with_bboxes(np.array(img).transpose(2,0,1), pred_boxes) ## (W,H,3) -> (3,W,H)
 
     fig = plt.figure(figsize=(12,12))
     ax = fig.add_subplot(111)
