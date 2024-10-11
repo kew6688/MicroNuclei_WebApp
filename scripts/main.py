@@ -11,5 +11,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     model = Model(args.mn_model_path, args.nuc_model_path)
-    # app = View(model)
-    # app.run()
+    app = View(model)
+    app.run()
