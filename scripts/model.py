@@ -36,22 +36,25 @@ elif device.type == "mps":
 
 
 @st.cache_resource
-def load_model(weight):
+def load_model_mn(weight):
     model = Application(weight)
     return model
+
+@st.cache_resource
+def load_model_sam(weight,cfg="configs/sam2.1/sam2.1_hiera_t.yaml"):
+    sam2_checkpoint = "../checkpoints/sam2.1_hiera_tiny.pt"
+    model_cfg = cfg
+
+    sam2 = build_sam2(model_cfg, sam2_checkpoint, device=device, apply_postprocessing=False)
+
+    nuc_app = SAM2AutomaticMaskGenerator(sam2)
+    return nuc_app
 
 class Model:
     def __init__(self, mn_model_path, nuc_model_path):
         print("======================= model start =======================")
-        self.mn_app = load_model(weight=mn_model_path)
-
-        sam2_checkpoint = "../checkpoints/sam2.1_hiera_tiny.pt"
-        model_cfg = "configs/sam2.1/sam2.1_hiera_t.yaml"
-
-        sam2 = build_sam2(model_cfg, sam2_checkpoint, device=device, apply_postprocessing=False)
-
-        self.nuc_app = SAM2AutomaticMaskGenerator(sam2)
-
+        self.mn_app = load_model_mn(weight=mn_model_path)
+        self.nuc_app = load_model_sam(nuc_model_path)
         self.categories = ["nuclei","micronuclei"]
 
     def make_prediction(self, img): 

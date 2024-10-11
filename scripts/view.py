@@ -1,6 +1,7 @@
 import streamlit as st
 from streamlit_drawable_canvas import st_canvas
 from PIL import Image
+import PIL
 import numpy as np
 import matplotlib.pyplot as plt
 import time
@@ -28,6 +29,43 @@ def show_anns(anns, borders=True):
 
     ax.imshow(img)
 
+def fig2img(fig):
+    """Convert a Matplotlib figure to a PIL Image and return it"""
+    import io
+    buf = io.BytesIO()
+    fig.savefig(buf,format='PNG')
+    buf.seek(0)
+    img = Image.open(buf)
+    print(fig.canvas.get_width_height())
+    return img
+
+def set_process():
+    st.session_state.process = True
+
+@st.fragment
+def show_predict_outputs():
+    # if st.session_state.image_uploaded:
+    #     st.rerun()
+
+    with st.container(height=510): ### ADD CONTAINER ###
+        fig = plt.figure(figsize=(12,12))
+        ax = fig.add_subplot(111)
+        plt.imshow(st.session_state.img_with_bbox)
+        plt.xticks([],[])
+        plt.yticks([],[])
+        ax.spines[["top", "bottom", "right", "left"]].set_visible(False)
+
+        show_anns(st.session_state.masks)
+
+        st.pyplot(fig, use_container_width=True)
+        # time.sleep(2)
+
+        st.header("Predictions")
+        st.write(st.session_state.prediction)
+    
+        img = fig2img(fig)
+        return img
+
 class View:
     '''
     View handles UI and interact functions. 
@@ -42,18 +80,51 @@ class View:
         print("======================= UI start =======================")
         ## Dashboard
         st.title("Micronuclei Detector :tea: :coffee:")
+
+        if 'image_uploaded' not in st.session_state:
+            st.session_state.image_uploaded = False
+            st.session_state.last_uploaded_image = None
+
         upload = st.file_uploader(label="Upload Image Here:", type=["png", "jpg", "jpeg"])
 
         if upload:
+            if st.session_state.last_uploaded_image != upload:
+                st.session_state.image_uploaded = True
+                st.session_state.last_uploaded_image = upload
+            else:
+                st.session_state.image_uploaded = False
+    
             img = Image.open(upload)
-            
-            # Define the canvas properties
-            canvas_width = 600
-            canvas_height = 400
-            st.image(img, caption="Uploaded Image", use_column_width=True)
 
+            if st.session_state.image_uploaded:
+                start = time.time()
+                prediction, img_with_bbox = self.model.process_image_seg_mn(img)
+                print(f"segment mn takes {time.time() - start}")
+
+                start = time.time()
+                masks = self.model.process_image_seg_nuc(img)
+                print(f"segment nuc takes {time.time() - start}")
+
+                st.session_state.prediction = prediction
+                st.session_state.img_with_bbox = img_with_bbox
+                st.session_state.masks = masks
+
+                st.session_state.img = show_predict_outputs()
+
+            # with st.container(height=1000): ### ADD CONTAINER ###
+            # if st.session_state.image_uploaded:
+            # Define the canvas properties
+            canvas_width = 800
+            canvas_height = 600
+            st.image(st.session_state.img, caption="Predicted Image", use_column_width=False)
+            st.header("Predictions")
+            st.write(st.session_state.prediction)
+
+            st.header("Track")
             # Convert the uploaded image to a drawable canvas background
+            img = st.session_state.img
             img_width, img_height = img.size
+            print(img.size)
             scale_factor = canvas_width / img_width
             resized_image = img.resize((canvas_width, int(img_height * scale_factor)))
 
@@ -84,27 +155,3 @@ class View:
                         points.append((x, y))  # Append coordinates to the points list
             # Show the collected points
             st.write("Collected Points:", points)
-
-            if st.button('Process Image'):
-                start = time.time()
-                prediction, img_with_bbox = self.model.process_image_seg_mn(img)
-                print(f"segment mn takes {time.time() - start}")
-
-                start = time.time()
-                masks = self.model.process_image_seg_nuc(img)
-                print(f"segment nuc takes {time.time() - start}")
-
-                fig = plt.figure(figsize=(12,12))
-                ax = fig.add_subplot(111)
-                plt.imshow(img_with_bbox)
-                plt.xticks([],[])
-                plt.yticks([],[])
-                ax.spines[["top", "bottom", "right", "left"]].set_visible(False)
-
-                show_anns(masks)
-
-                st.pyplot(fig, use_container_width=True)
-
-                st.header("Predictions")
-                st.write(prediction)
-            
