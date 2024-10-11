@@ -7,9 +7,10 @@ A web demo for micronuclei detection project.
 ![Project Architecture](./docs/architect.png)
 
 # Getting Started
+Start the console by ```streamlit run main.py```
+
 Web link: www....
 
-build your own console by ...
 
 # Features
 - Cloud-based deployment of deep-learning models
