@@ -6,11 +6,10 @@ import argparse
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Add parent nuclei to mn.')
-    parser.add_argument('--model_path', required=True,
-                        help='the json file with processed dataset information')
+    parser.add_argument('mn_model_path', help='the path to pre trained model for mn segment')
+    parser.add_argument('nuc_model_path', help='the path to pre trained model for nuc segment')
     args = parser.parse_args()
-    print(args)
 
-    # model = Model(args.model_path)
-    # app = View()
+    model = Model(args.mn_model_path, args.nuc_model_path)
+    # app = View(model)
     # app.run()
