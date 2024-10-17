@@ -116,7 +116,7 @@ class View:
             # Define the canvas properties
             canvas_width = 800
             canvas_height = 600
-            st.image(st.session_state.img, caption="Predicted Image", use_column_width=False)
+            st.image(st.session_state.img, caption="Predicted Image", use_column_width=True)
             st.header("Predictions")
             st.write(st.session_state.prediction)
 
