@@ -41,8 +41,8 @@ def load_model_mn(weight):
     return model
 
 @st.cache_resource
-def load_model_sam(weight,cfg="configs/sam2.1/sam2.1_hiera_t.yaml"):
-    sam2_checkpoint = "../checkpoints/sam2.1_hiera_tiny.pt"
+def load_model_sam(weight,cfg):
+    sam2_checkpoint = weight
     model_cfg = cfg
 
     sam2 = build_sam2(model_cfg, sam2_checkpoint, device=device, apply_postprocessing=False)
@@ -51,10 +51,10 @@ def load_model_sam(weight,cfg="configs/sam2.1/sam2.1_hiera_t.yaml"):
     return nuc_app
 
 class Model:
-    def __init__(self, mn_model_path, nuc_model_path):
+    def __init__(self, mn_model_path, nuc_model_path, nuc_model_cfg):
         print("======================= model start =======================")
         self.mn_app = load_model_mn(weight=mn_model_path)
-        self.nuc_app = load_model_sam(nuc_model_path)
+        self.nuc_app = load_model_sam(nuc_model_path,nuc_model_cfg)
         self.categories = ["nuclei","micronuclei"]
 
     def make_prediction(self, img): 
