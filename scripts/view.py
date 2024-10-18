@@ -68,7 +68,7 @@ def show_predict_outputs():
 
 class View:
     '''
-    View handles UI and interact functions. 
+    View class handles UI and interact functions. 
     '''
     def __init__(self, model):
         self.model = model

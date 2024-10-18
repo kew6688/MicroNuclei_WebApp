@@ -51,6 +51,9 @@ def load_model_sam(weight,cfg):
     return nuc_app
 
 class Model:
+    '''
+    Model class handels backend functions and load machine learning models
+    '''
     def __init__(self, mn_model_path, nuc_model_path, nuc_model_cfg):
         print("======================= model start =======================")
         self.mn_app = load_model_mn(weight=mn_model_path)
@@ -108,7 +111,7 @@ class Model:
                 
         pred_boxes = np.concatenate(boxes_lst)
         print(pred_boxes, pred_boxes.shape)
-        img_with_bbox = self.create_image_with_bboxes(np.array(img).transpose(2,0,1), pred_boxes) ## (W,H,3) -> (3,W,H)
+        img_with_bbox = self.create_image_with_bboxes(np.array(img)[:,:,:3].transpose(2,0,1), pred_boxes) ## (W,H,3) -> (3,W,H)
         return output, img_with_bbox
     
     def process_image_seg_nuc(self,img):
