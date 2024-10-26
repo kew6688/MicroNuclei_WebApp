@@ -1,6 +1,13 @@
 # Program entry point
+import os
+import sys
+import inspect
 
-from view import View
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0, parentdir) 
+
+from view import TrackView
 from model import Model
 import argparse
 
@@ -14,5 +21,5 @@ if __name__ == "__main__":
     args.nuc_model_path="../checkpoints/sam2.1_hiera_tiny.pt"
     args.nuc_model_cfg ="configs/sam2.1/sam2.1_hiera_t.yaml"
     model = Model(args.mn_model_path, args.nuc_model_path, args.nuc_model_cfg)
-    app = View(model)
+    app = TrackView(model)
     app.run()

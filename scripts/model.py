@@ -47,7 +47,16 @@ def load_model_sam(weight,cfg):
 
     sam2 = build_sam2(model_cfg, sam2_checkpoint, device=device, apply_postprocessing=False)
 
-    nuc_app = SAM2AutomaticMaskGenerator(sam2)
+    # nuc_app = SAM2AutomaticMaskGenerator(sam2)
+    nuc_app = SAM2AutomaticMaskGenerator(
+        model=sam2,
+        points_per_side=64,
+        points_per_batch=128,
+        pred_iou_thresh=0.7,
+        stability_score_thresh=0.92,
+        stability_score_offset=0.7,
+        min_mask_region_area=25
+    )
     return nuc_app
 
 class Model:
@@ -74,7 +83,7 @@ class Model:
         '''
         img_tensor = torch.tensor(img) ## Transpose
         prediction = torch.tensor(prediction)
-        img_with_bboxes = draw_bounding_boxes(img_tensor, boxes=prediction, width=2)
+        img_with_bboxes = draw_bounding_boxes(img_tensor, boxes=prediction, colors="red", width=1)
         img_with_bboxes_np = img_with_bboxes.detach().numpy().transpose(1,2,0) ### (3,W,H) -> (W,H,3), Channel first to channel last.
         return img_with_bboxes_np
 
@@ -99,7 +108,7 @@ class Model:
 
                 image = pil_to_tensor(img.crop(box))
                 prediction = self.make_prediction(image) ## Dictionary
-                pred_boxes, pred_masks = self.mn_app._post_process(prediction)
+                pred_boxes, pred_masks,_ = self.mn_app._post_process(prediction)
                 pred_boxes[:, [0,2]] += cur_x
                 pred_boxes[:, [1,3]] += cur_y
                 boxes_lst.append(pred_boxes.cpu().numpy())
