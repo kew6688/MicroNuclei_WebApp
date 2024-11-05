@@ -1,2 +1,11 @@
 matplotlib
 scikit-learn
+numpy
+pillow
+scipy
+
+streamlit
+streamlit_drawable_canvas
+
+pytorch
+sam2
