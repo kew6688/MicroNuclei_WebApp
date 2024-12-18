@@ -29,6 +29,11 @@ cd ..
 - Scalable platform that minimizes cost and inference time
 - Drag and drop interface for running predictions and tracks
 
+# Updates
+- Multi files upload accepted
+  ![image](https://github.com/user-attachments/assets/f5133b9b-5d08-41e7-853e-081abc9452be)
+- Output count to csv file
+  ![image](https://github.com/user-attachments/assets/449c1840-7ac7-4b0c-af57-82294ec137fb)
 
 # TODO
 - add tiff input
