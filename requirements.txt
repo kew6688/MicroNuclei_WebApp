@@ -3,9 +3,13 @@ scikit-learn
 numpy
 pillow
 scipy
+pandas
 
 streamlit
 streamlit_drawable_canvas
+stqdm
 
 torch
 timm
+
+-e git+https://github.com/kew6688/MicroNuclei_Detection.git@46ffad2e5632406eadcca783786fd4c5e0a99019#egg=mn_segmentation

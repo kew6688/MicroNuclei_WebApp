@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 import time
 import json
 from scipy.interpolate import splprep, splev
+import pandas as pd
+from stqdm import stqdm
 
 def show_anns(anns, borders=True):
     if len(anns) == 0:
@@ -60,8 +62,8 @@ def show_predict_outputs():
 
             st.pyplot(fig, use_container_width=True)
 
-            st.header("Predictions")
-            st.write(st.session_state.prediction)
+            # st.header("Predictions")
+            # st.write(st.session_state.prediction)
     else:
         with st.container(height=510): ### ADD CONTAINER ###
             fig = plt.figure(figsize=(12,12))
@@ -77,8 +79,16 @@ def show_predict_outputs():
             # time.sleep(2)
 
             st.header("Predictions")
-            st.write(st.session_state.prediction)
+            # st.write(st.session_state.prediction)
         
+
+def output_count(cnt_lst):
+    '''
+    return a encoded dataframe to be downloaded
+    '''
+    df = pd.DataFrame(cnt_lst)
+    return df.to_csv(index=False).encode('utf-8')
+
 # Function to interpolate a smooth curve between all points from frame 0 to current frame
 def interpolate_curve(points_up_to_current):
     # Separate the list of points into x and y coordinates
@@ -126,7 +136,7 @@ class DetectView:
             st.session_state.image_uploaded = False
             st.session_state.last_uploaded_image = None
 
-        upload = st.file_uploader(label="Upload Image Here:", type=["png", "jpg", "jpeg", "tif"])
+        upload = st.file_uploader(label="Upload Image Here:", type=["png", "jpg", "jpeg", "tif"], accept_multiple_files=True)
         
         if 'clicked' not in st.session_state:
             st.session_state.clicked = False
@@ -142,20 +152,35 @@ class DetectView:
             else:
                 st.session_state.image_uploaded = False
 
-            img = Image.open(upload)
+            if not isinstance(upload,list):
+                upload = [upload]
+            
+            pred_lst = []
+            cnt_lst = {"image_name":[], 
+                       "count": []}
 
-            if st.session_state.image_uploaded:
-                start = time.time()
-                prediction, img_with_bbox = self.model.process_image_seg_mn(img)
-                print(f"segment mn takes {time.time() - start}")
+            # for i in stqdm(range(len(upload))):
+            for up in stqdm(upload):
+                print(up)
+                img = Image.open(up)
 
-                # start = time.time()
-                # masks = self.model.process_image_seg_nuc(img)
-                # print(f"segment nuc takes {time.time() - start}")
+                if st.session_state.image_uploaded:
+                    start = time.time()
+                    prediction, img_with_bbox = self.model.process_image_seg_mn(img)
+                    print(f"segment mn takes {time.time() - start}")
 
-                st.session_state.prediction = prediction
-                st.session_state.img_with_bbox = img_with_bbox
-                # st.session_state.masks = masks
+                    # start = time.time()
+                    # masks = self.model.process_image_seg_nuc(img)
+                    # print(f"segment nuc takes {time.time() - start}")
+
+                    st.session_state.prediction = prediction
+                    st.session_state.img_with_bbox = img_with_bbox
+                    # st.session_state.masks = masks
+
+                    # append output into list
+                    pred_lst.append(prediction)
+                    cnt_lst["image_name"].append(up.name)
+                    cnt_lst["count"].append(len(prediction["area"]))
 
             st.session_state.img = show_predict_outputs()
             
@@ -168,7 +193,14 @@ class DetectView:
             # st.image(st.session_state.img, caption="Predicted Image", use_column_width=True)
 
             st.header("Predictions")
-            st.download_button('Download output', json.dumps(st.session_state.prediction)) # TODO: use proper json format
+            st.download_button('Download output', json.dumps(pred_lst), "prediction.json")
+            st.download_button(
+                                "Download counts",
+                                output_count(cnt_lst),
+                                "count.csv",
+                                "text/csv",
+                                key='download-csv'
+                                )
             st.write(st.session_state.prediction)
 
     def resolution_ui(self):
