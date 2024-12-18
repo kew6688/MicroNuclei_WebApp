@@ -5,8 +5,8 @@ from torchvision.models.detection import fasterrcnn_resnet50_fpn_v2, FasterRCNN_
 from torchvision.utils import draw_bounding_boxes
 import streamlit as st
 
-from sam2.build_sam import build_sam2
-from sam2.automatic_mask_generator import SAM2AutomaticMaskGenerator
+# from sam2.build_sam import build_sam2
+# from sam2.automatic_mask_generator import SAM2AutomaticMaskGenerator
 
 from mn_segmentation.lib.Application import Application
 import mn_segmentation.lib.cluster as cluster
@@ -66,7 +66,7 @@ class Model:
     def __init__(self, mn_model_path, nuc_model_path, nuc_model_cfg):
         print("======================= model start =======================")
         self.mn_app = load_model_mn(weight=mn_model_path)
-        self.nuc_app = load_model_sam(nuc_model_path,nuc_model_cfg)
+        # self.nuc_app = load_model_sam(nuc_model_path,nuc_model_cfg)
         self.categories = ["nuclei","micronuclei"]
 
     def make_prediction(self, img): 

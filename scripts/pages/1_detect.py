@@ -17,7 +17,7 @@ if __name__ == "__main__":
     # parser.add_argument('nuc_model_path', help='the path to pre trained model for nuc segment')
     args = parser.parse_args()
 
-    args.mn_model_path = "checkpoints/RCNN.pt"
+    args.mn_model_path = "checkpoints/maskrcnn-resnet50fpn.pt"
     args.nuc_model_path="checkpoints/sam2.1_hiera_tiny.pt"
     args.nuc_model_cfg ="configs/sam2.1/sam2.1_hiera_t.yaml"
     model = Model(args.mn_model_path, args.nuc_model_path, args.nuc_model_cfg)

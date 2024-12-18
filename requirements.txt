@@ -7,5 +7,5 @@ scipy
 streamlit
 streamlit_drawable_canvas
 
-pytorch
-sam2
+torch
+timm

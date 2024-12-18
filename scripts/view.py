@@ -58,10 +58,7 @@ def show_predict_outputs():
             plt.yticks([],[])
             ax.spines[["top", "bottom", "right", "left"]].set_visible(False)
 
-            # show_anns(st.session_state.masks)
-
             st.pyplot(fig, use_container_width=True)
-            # time.sleep(2)
 
             st.header("Predictions")
             st.write(st.session_state.prediction)
@@ -136,7 +133,7 @@ class DetectView:
 
         def click_button():
             st.session_state.clicked = not st.session_state.clicked
-        st.button('Display nuclei segmentation', on_click=click_button)
+        # st.button('Display nuclei segmentation', on_click=click_button)
 
         if upload:
             if st.session_state.last_uploaded_image != upload:
@@ -152,13 +149,13 @@ class DetectView:
                 prediction, img_with_bbox = self.model.process_image_seg_mn(img)
                 print(f"segment mn takes {time.time() - start}")
 
-                start = time.time()
-                masks = self.model.process_image_seg_nuc(img)
-                print(f"segment nuc takes {time.time() - start}")
+                # start = time.time()
+                # masks = self.model.process_image_seg_nuc(img)
+                # print(f"segment nuc takes {time.time() - start}")
 
                 st.session_state.prediction = prediction
                 st.session_state.img_with_bbox = img_with_bbox
-                st.session_state.masks = masks
+                # st.session_state.masks = masks
 
             st.session_state.img = show_predict_outputs()
             

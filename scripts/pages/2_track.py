@@ -22,4 +22,4 @@ if __name__ == "__main__":
     args.nuc_model_cfg ="configs/sam2.1/sam2.1_hiera_t.yaml"
     model = Model(args.mn_model_path, args.nuc_model_path, args.nuc_model_cfg)
     app = TrackView(model)
-    app.run()
+    # app.run()
