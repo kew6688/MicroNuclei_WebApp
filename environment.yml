@@ -1,4 +1,4 @@
-name: mn_web1
+name: mn_web
 channels:
   - pytorch
   - nvidia
@@ -153,6 +153,7 @@ dependencies:
       - scikit-learn==1.5.2
       - scipy==1.14.1
       - smmap==5.0.1
+      - stqdm==0.0.5
       - streamlit==1.39.0
       - streamlit-drawable-canvas==0.9.3
       - tenacity==9.0.0
