@@ -47,16 +47,16 @@ def load_model_sam(weight,cfg):
 
     sam2 = build_sam2(model_cfg, sam2_checkpoint, device=device, apply_postprocessing=False)
 
-    # nuc_app = SAM2AutomaticMaskGenerator(sam2)
-    nuc_app = SAM2AutomaticMaskGenerator(
-        model=sam2,
-        points_per_side=64,
-        points_per_batch=128,
-        pred_iou_thresh=0.7,
-        stability_score_thresh=0.92,
-        stability_score_offset=0.7,
-        min_mask_region_area=25
-    )
+    nuc_app = SAM2AutomaticMaskGenerator(sam2)
+    # nuc_app = SAM2AutomaticMaskGenerator(
+    #     model=sam2,
+    #     points_per_side=64,
+    #     points_per_batch=128,
+    #     pred_iou_thresh=0.7,
+    #     stability_score_thresh=0.92,
+    #     stability_score_offset=0.7,
+    #     min_mask_region_area=25
+    # )
     return nuc_app
 
 class Model:
